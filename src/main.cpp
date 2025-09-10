@@ -144,7 +144,7 @@ void task_3_real() {
         if (element >= CUTOFF + 1000000 - 1)
             bitarr[element - (CUTOFF + 1000000)] = 1;
     }
-    for (int i = 0; i < N; ++i)
+    for (int i = 0; i < CUTOFF; ++i)
         if (bitarr[i])
             out << i << "\n";
     in.close(); out.close();
