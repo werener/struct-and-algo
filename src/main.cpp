@@ -120,11 +120,29 @@ void generate_file(std::string path) {
     file.close();
 }
 
-const std::string PATH_IN = "/mnt/c/Users/werener/Desktop/gitfolder/struct-and-algo/files/task5.txt";
-const std::string PATH_OUT = "/mnt/c/Users/werener/Desktop/gitfolder/struct-and-algo/files/task5_result.txt";
+const std::string PATH_IN = "./files/task5.txt";
+const std::string PATH_OUT = "./files/task5_result.txt";
 
 const int N = 10000000 - 1000000;
 const int CUTOFF = N / 2;
+
+void task_3_real();
+void task_3();
+
+
+#include <chrono>
+using namespace std::chrono;
+int main() {
+    for (int i = 0; i < 5; ++i) {
+        auto start = high_resolution_clock::now();
+        task_3_real();
+        auto end = high_resolution_clock::now();
+        int duration = duration_cast<milliseconds>(end - start).count();
+        cout << i + 1 << ": " << duration << "ms" << std::endl; 
+    }
+}
+
+
 void task_3_real() {
     std::fstream in(PATH_IN), out(PATH_OUT);
     // this vector is 4.5mil bit (or ~0.54MB) 
@@ -150,20 +168,6 @@ void task_3_real() {
     in.close(); out.close();
 }
 
-void task_3();
-
-
-#include <chrono>
-using namespace std::chrono;
-int main() {
-    for (int i = 0; i < 5; ++i) {
-        auto start = high_resolution_clock::now();
-        task_3_real();
-        auto end = high_resolution_clock::now();
-        int duration = duration_cast<milliseconds>(end - start).count();
-        cout << i + 1 << ": " << duration << "ms" << std::endl; 
-    }
-}
 
 void task_3() {
     std::fstream in(PATH_IN), out(PATH_OUT);
