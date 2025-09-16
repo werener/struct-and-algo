@@ -48,7 +48,6 @@ Book gen_entry() {
     return Book(ISBN, author, title);
 }
 
-
 void write_to_file(int num_entries, string path="./files/data.dat") {
     std::ofstream file(path, std::ios::binary);
     ui64 ISBN;
@@ -78,7 +77,7 @@ std::vector<Book> read_file(std::ifstream &file) {
             author.push_back(cur);
             cur = file.get();
             if (file.eof())
-                break;
+                return entries;
         }
         //  get Title
         title = "";
@@ -87,7 +86,7 @@ std::vector<Book> read_file(std::ifstream &file) {
             title.push_back(cur);
             cur = file.get();
             if (file.eof())
-                break;
+                return entries;   
         }
         entries.push_back(Book(ISBN, author, title));
     }
@@ -95,9 +94,10 @@ std::vector<Book> read_file(std::ifstream &file) {
 }
 
 int main() {
-    // write_to_file(100);
+    write_to_file(100);
     std::ifstream f("./files/data.dat", std::ios::binary);
     auto entries = read_file(f);
-    // entries[0].print();
     f.close();
+    for (int i = 0; i < entries.size(); i += 10)
+        entries[i].print();
 }

@@ -1,5 +1,7 @@
-
+# Project-specific
 /build/
+.~lock.*
+
 # Prerequisites
 *.d
 
