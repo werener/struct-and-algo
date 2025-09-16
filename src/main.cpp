@@ -107,16 +107,24 @@ Book linear_search(ui64 key, std::ifstream &file) {
 void task1();
 void task2();
 
+using namespace std::chrono;
 int main() {
+    write_to_file(10000);
+    // get key of the last entry to check the worst case scenario
     std::ifstream f("./files/data.dat", std::ios::binary);
-    auto book = linear_search(155624561148, f);
-    book.print();
-}
-
-void task2() {
-    std::ifstream f("./files/data.dat", std::ios::binary);
-    auto book = linear_search(155624561148, f);
-    book.print();
+    auto entries = read_file(f);
+    ui64 last_entry_key = entries[entries.size() - 1].ISBN;
+    for (int i = 0; i < 3; ++i) {
+        std::ifstream f("./files/data.dat", std::ios::binary);
+        // get measurement
+        auto start = high_resolution_clock::now();
+        Book book = linear_search(last_entry_key, f);
+        auto end = high_resolution_clock::now();
+        double duration = duration_cast<microseconds>(end - start).count();
+        // output
+        std::cout << "Measurement #" << i + 1 << ": " << duration / 1000 << " ms\n";
+        book.print();
+    }
 }
 
 void task1() {
