@@ -82,9 +82,7 @@ std::vector<Book> read_file(std::ifstream &file) {
     char cur;
     while (!file.eof()) {
         //  get ISBN
-        std::cout << 1;
         file.read((char*) &ISBN, sizeof(ui64));
-        std::cout << ISBN;
         //  get Author
         author = "";
         cur = file.get();
@@ -94,7 +92,6 @@ std::vector<Book> read_file(std::ifstream &file) {
             if (file.eof())
                 break;
         }
-        std::cout << " " << author;
         //  get Title
         title = "";
         cur = file.get();
@@ -104,7 +101,6 @@ std::vector<Book> read_file(std::ifstream &file) {
             if (file.eof())
                 break;
         }
-        std::cout << " " << title << std::endl;
         entries.push_back(Book(ISBN, author, title));
     }
     return entries;
