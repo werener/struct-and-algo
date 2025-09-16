@@ -109,7 +109,11 @@ void task2();
 
 using namespace std::chrono;
 int main() {
-    write_to_file(10000);
+    
+}
+
+void task2() {
+    write_to_file(100);
     // get key of the last entry to check the worst case scenario
     std::ifstream f("./files/data.dat", std::ios::binary);
     auto entries = read_file(f);
@@ -126,7 +130,6 @@ int main() {
         book.print();
     }
 }
-
 void task1() {
     write_to_file(100);
     std::ifstream f("./files/data.dat", std::ios::binary);
