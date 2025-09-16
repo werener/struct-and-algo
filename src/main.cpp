@@ -6,6 +6,7 @@
 #include <ios>
 #include <string>
 #include <random>
+#include <chrono>
 
 #define u unsigned
 #define ui64 std::uint64_t
@@ -25,7 +26,10 @@ struct Book {
         this->title = title;
     }
     void print() {
-        std::cout << ISBN <<  " " << author << " " << title << "\n";
+        if (this->ISBN == CONSTRAINT_MAX + 1)
+            std::cout << "No such book\n";
+        else
+            std::cout << ISBN <<  " " << author << " " << title << "\n";
     }
 };
 
@@ -93,7 +97,29 @@ std::vector<Book> read_file(std::ifstream &file) {
     return entries;
 }
 
+Book linear_search(ui64 key, std::ifstream &file) {
+    for (auto book: read_file(file)) 
+        if (book.ISBN == key) 
+            return book;
+    return Book(CONSTRAINT_MAX + 1, "", "");
+}
+
+void task1();
+void task2();
+
 int main() {
+    std::ifstream f("./files/data.dat", std::ios::binary);
+    auto book = linear_search(155624561148, f);
+    book.print();
+}
+
+void task2() {
+    std::ifstream f("./files/data.dat", std::ios::binary);
+    auto book = linear_search(155624561148, f);
+    book.print();
+}
+
+void task1() {
     write_to_file(100);
     std::ifstream f("./files/data.dat", std::ios::binary);
     auto entries = read_file(f);
