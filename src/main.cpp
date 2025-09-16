@@ -27,10 +27,22 @@ static const char lower[26] = {
 const ui64 CONSTRAINT_MIN = 100000000000;
 const ui64 CONSTRAINT_MAX = 1000000000000 - 1;
 
+struct Book {
+    ui64 ISBN;
+    string author;
+    string title;
+    Book(ui64 ISBN, string author, string title) {
+        this->ISBN = ISBN;
+        this->author = author;
+        this->title = title;
+    }
+    void print() {
+        std::cout << ISBN <<  " " << author << " " << title << "\n";
+    }
+};
 
 std::random_device rd;
-
-std::tuple<ui64, string, string> gen_entry() {
+Book gen_entry() {
     std::mt19937_64 gen_key(rd());
     std::uniform_int_distribution<ui64> distribution(CONSTRAINT_MIN, CONSTRAINT_MAX);
     string author = string(".."), title = string(1, upper[rand() % 26]);
@@ -45,8 +57,7 @@ std::tuple<ui64, string, string> gen_entry() {
     //  title
     for (int i = 0; i < 9 + rand() % 16; ++i)
         title.insert(title.end(), lower[rand() % 26]);
-
-    return std::tuple<ui64, string, string>{ISBN, author, title};
+    return Book(ISBN, author, title);
 }
 
 
@@ -55,16 +66,49 @@ void write_to_file(int num_entries, string path="./files/data.dat") {
     ui64 ISBN;
     string author, title;
     for(int i = 0; i < num_entries; ++i) {
-        tie(ISBN, author, title) = gen_entry();
-        file.write((char*) &ISBN, sizeof(ui64));
+        Book book = gen_entry();
+        file.write((char*) &book.ISBN, sizeof(ui64));
         //  \0 - terminating character
-        file.write(author.c_str(), author.length() + 1);
-        file.write(title.c_str(), title.length() + 1);
+        file.write(book.author.c_str(), book.author.length() + 1);
+        file.write(book.title.c_str(), book.title.length() + 1);
     }
     file.close();
 }
 
+std::vector<Book> read_file(std::ifstream &file) {
+    std::vector<Book> entries;
+    ui64 ISBN;
+    string author, title;
+    char cur;
+    while (!file.eof()) {
+        //  get ISBN
+        file.read((char*) &ISBN, sizeof(ui64));
+        std::cout << ISBN;
+        //  get Author
+        author = "";
+        cur = file.get();
+        while (cur != '\0') {
+            author.push_back(cur);
+            cur = file.get();
+        }
+        std::cout << " " << author;
+        //  get Title
+        title = "";
+        cur = file.get();
+        while (cur != '\0') {
+            title.push_back(cur);
+            cur = file.get();
+        }
+        std::cout << " " << title << "\n" << std::endl;
+        entries.push_back(Book(ISBN, author, title));
+    }
+    return entries;
+}
 
 int main() {
     write_to_file(100);
+    std::ifstream f("./files/data.dat", std::ios::binary);
+    auto entries = read_file(f);
+    // entries[0].print();
+    f.close();
 }
