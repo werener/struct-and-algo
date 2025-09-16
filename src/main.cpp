@@ -12,9 +12,17 @@
 #define string std::string
 
 
-static const char alphabet[52] = {
-    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
+static const char upper[26] = {
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 
+    'H', 'I', 'J', 'K', 'L', 'M', 'N', 
+    'O', 'P', 'Q', 'R', 'S', 'T', 
+    'U', 'V', 'W', 'X', 'Y', 'Z',
+};
+static const char lower[26] = {
+    'a', 'b', 'c', 'd', 'e', 'f', 'g',
+    'h', 'i', 'j', 'k', 'l', 'm', 'n',
+    'o', 'p', 'q', 'r', 's', 't',
+    'u', 'v', 'w', 'x', 'y', 'z',
 };
 const ui64 CONSTRAINT_MIN = 100000000000;
 const ui64 CONSTRAINT_MAX = 1000000000000 - 1;
@@ -25,10 +33,19 @@ std::random_device rd;
 std::tuple<ui64, string, string> gen_entry() {
     std::mt19937_64 gen_key(rd());
     std::uniform_int_distribution<ui64> distribution(CONSTRAINT_MIN, CONSTRAINT_MAX);
-    std::uint64_t ISBN = distribution(gen_key);
+    string author = string(".."), title = string(1, upper[rand() % 26]);
+    //ISBN
+    ui64 ISBN = distribution(gen_key);
+    //  author
+    author.insert(author.begin(), upper[rand() % 26]);
+    author.insert(author.begin() + 2, upper[rand() % 26]);
+    author.insert(author.end(), upper[rand() % 26]);
+    for (int i = 0; i < 5 + rand() % 5;++i)
+        author.insert(author.end(), lower[rand() % 26]);
+    //  title
+    for (int i = 0; i < 7 + rand() % 10; ++i)
+        title.insert(title.end(), lower[rand() % 26]);
 
-    string author, title;
-    
     return std::tuple<ui64, string, string>{ISBN, author, title};
 }
 
@@ -39,5 +56,6 @@ void write_to_file(bool dump_txt=false) {
 
 
 int main() {
-    std::cout << (char)('Z' + 1) << " " << (int) 'a';
+    gen_entry();
+    gen_entry();
 }
