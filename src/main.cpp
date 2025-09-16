@@ -82,6 +82,7 @@ std::vector<Book> read_file(std::ifstream &file) {
     char cur;
     while (!file.eof()) {
         //  get ISBN
+        std::cout << 1;
         file.read((char*) &ISBN, sizeof(ui64));
         std::cout << ISBN;
         //  get Author
@@ -90,6 +91,8 @@ std::vector<Book> read_file(std::ifstream &file) {
         while (cur != '\0') {
             author.push_back(cur);
             cur = file.get();
+            if (file.eof())
+                break;
         }
         std::cout << " " << author;
         //  get Title
@@ -98,15 +101,17 @@ std::vector<Book> read_file(std::ifstream &file) {
         while (cur != '\0') {
             title.push_back(cur);
             cur = file.get();
+            if (file.eof())
+                break;
         }
-        std::cout << " " << title << "\n" << std::endl;
+        std::cout << " " << title << std::endl;
         entries.push_back(Book(ISBN, author, title));
     }
     return entries;
 }
 
 int main() {
-    write_to_file(100);
+    // write_to_file(100);
     std::ifstream f("./files/data.dat", std::ios::binary);
     auto entries = read_file(f);
     // entries[0].print();
