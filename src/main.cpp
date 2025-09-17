@@ -69,33 +69,34 @@ void write_to_file(int num_entries, string path="./files/data.dat") {
     file.close();
 }
 
+string read_until_escape(std::ifstream &file) {
+    char cur;
+    string s = "";
+    cur = file.get();
+    while (cur != '\0') {
+        s.push_back(cur);
+        cur = file.get();
+        if (file.eof())
+            return s;
+    }
+    return s;
+}
+
 std::vector<Book> read_file(std::ifstream &file) {
     std::vector<Book> entries;
     ui64 ISBN;
-    string author, title;
     char cur;
-    while (!file.eof()) {
+    while (true) {
         //  get ISBN
         file.read((char*) &ISBN, sizeof(ui64));
-        //  get Author
-        author = "";
-        cur = file.get();
-        while (cur != '\0') {
-            author.push_back(cur);
-            cur = file.get();
-            if (file.eof())
-                return entries;
-        }
-        //  get Title
-        title = "";
-        cur = file.get();
-        while (cur != '\0') {
-            title.push_back(cur);
-            cur = file.get();
-            if (file.eof())
-                return entries;   
-        }
-        entries.push_back(Book(ISBN, author, title));
+        //  check if the file has ended
+        if(file.eof())
+            return entries;
+        entries.push_back(Book(
+            ISBN, 
+            read_until_escape(file),    //  author
+            read_until_escape(file)     //  title
+        ));
     }
     return entries;
 }
@@ -156,7 +157,7 @@ std::vector<Cell> read_to_table(std::ifstream &file) {
 using namespace std::chrono;
 int main() {
     std::ifstream f("./files/data.dat", std::ios::binary);
-    auto table = read_to_table(f);
+    auto table = read_file(f);
     for(auto a:table)
         a.print();
 
