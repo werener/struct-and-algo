@@ -131,24 +131,15 @@ std::vector<Cell> read_to_table(std::ifstream &file) {
     file.seekg(0);
     std::vector<Cell> table;
     Cell cell(0, 0);
-    while (!file.eof()) {
+    while (true) {
         //  get current cell's contents
         file.read((char*) &cell.ISBN, sizeof(ui64));
         cell.offset = file.tellg();
-        // 
-        char cur;
-        cur = file.get();
-        while (cur != '\0') {
-            cur = file.get();
-            if (file.eof())
-                return table;
-        }
-        cur = file.get();
-        while (cur != '\0') {
-            cur = file.get();
-            if (file.eof())
-                return table;   
-        }
+        //  skip to next key
+        read_until_escape(file);
+        read_until_escape(file);
+        if (file.eof())
+            return table;
         table.push_back(cell);
     }
     return table;
@@ -157,10 +148,9 @@ std::vector<Cell> read_to_table(std::ifstream &file) {
 using namespace std::chrono;
 int main() {
     std::ifstream f("./files/data.dat", std::ios::binary);
-    auto table = read_file(f);
+    auto table = read_to_table(f);
     for(auto a:table)
         a.print();
-
 }
 
 void task2() {
