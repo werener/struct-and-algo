@@ -7,11 +7,12 @@
 #include <string>
 #include <random>
 #include <chrono>
+#include <algorithm>
 
-#define u unsigned
-#define ui64 std::uint64_t
-#define string std::string
+typedef unsigned u;
 
+typedef std::uint64_t ui64;
+typedef std::string string;
 
 const ui64 CONSTRAINT_MIN = 100000000000;
 const ui64 CONSTRAINT_MAX = 1000000000000 - 1;
@@ -111,19 +112,17 @@ Book linear_search(ui64 key, std::ifstream &file) {
 struct Cell {
     ui64 ISBN;
     std::streampos offset;
-
-
     Cell(ui64 ISBN, std::streampos offset) {
         this->ISBN = ISBN;
         this->offset = offset;
     }
 
-    void print() {
-        std::cout << this->ISBN << " " << this->offset << "\n";
-    }
-
     static bool compare(Cell c1, Cell c2) {
         return c1.ISBN < c2.ISBN;
+    }
+    
+    void print() {
+        std::cout << this->ISBN << " " << this->offset << "\n";
     }
 };
 
@@ -138,19 +137,56 @@ std::vector<Cell> read_to_table(std::ifstream &file) {
         //  skip to next key
         read_until_escape(file);
         read_until_escape(file);
-        if (file.eof())
+        if (file.eof()) {
+            std::sort(table.begin(), table.end(), Cell::compare);
             return table;
+        }
         table.push_back(cell);
     }
-    return table;
+}
+
+size_t* make_lookup(std::vector<Cell> table) {
+    int n = log2(table.size());
+    size_t *lookup_table = (size_t*)malloc(n * sizeof(size_t));
+    
+    int pow = 1;
+    int i = 0;
+    do {
+        pow <<= 1;
+        lookup_table[i] = (n + (pow >> 1)) / pow;
+    } while (lookup_table[i++] != 0);
+    return lookup_table;
+}
+
+typedef std::pair<std::vector<Cell>, size_t*> table_table_pair;
+int uniform_binary_search(table_table_pair pair, ui64 key) {
+    std::vector<Cell> table = pair.first;
+    size_t *lookup_table = pair.second;
+    // mid point
+    size_t cur = lookup_table[0] - 1;
+
+    int i = 0;
+    while (lookup_table[i] != 0) {
+        if (key == table[cur].ISBN)
+            return cur;
+        else if (key < table[cur].ISBN)
+            cur -= lookup_table[++i];
+        else
+            cur += lookup_table[++i];
+    }
+    return cur;
 }
 
 using namespace std::chrono;
 int main() {
     std::ifstream f("./files/data.dat", std::ios::binary);
     auto table = read_to_table(f);
-    for(auto a:table)
-        a.print();
+    auto search_for = table[0];
+    std::cout << "Looking for:\t";
+    search_for.print();
+    table[uniform_binary_search(
+        table_table_pair(table, make_lookup(table)), search_for.ISBN
+    )].print();
 }
 
 void task2() {
