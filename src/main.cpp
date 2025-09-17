@@ -34,9 +34,6 @@ struct Book {
     }
 };
 
-void task1();
-void task2();
-
 std::random_device rd;
 Book gen_entry() {
     std::mt19937_64 gen_key(rd());
@@ -145,6 +142,7 @@ std::vector<Cell> read_to_table(std::ifstream &file) {
     }
 }
 
+//  creation of lookup table
 size_t* make_lookup(std::vector<Cell> table) {
     int n = log2(table.size());
     size_t *lookup_table = (size_t*)malloc(n * sizeof(size_t));
@@ -158,8 +156,8 @@ size_t* make_lookup(std::vector<Cell> table) {
     return lookup_table;
 }
 
-typedef std::pair<std::vector<Cell>, size_t*> table_table_pair;
-int uniform_binary_search(table_table_pair pair, ui64 key) {
+typedef std::pair<std::vector<Cell>, size_t*> ttp;
+int uniform_binary_search(ttp pair, ui64 key) {
     std::vector<Cell> table = pair.first;
     size_t *lookup_table = pair.second;
     // mid point
@@ -177,18 +175,49 @@ int uniform_binary_search(table_table_pair pair, ui64 key) {
     return cur;
 }
 
+Book get_cell_info(Cell cell, std::ifstream &file) {
+    file.seekg(cell.offset);
+    return Book(
+        cell.ISBN, 
+        read_until_escape(file),
+        read_until_escape(file)
+    );
+}
+
 using namespace std::chrono;
+
+void task1();
+void task2();
+void task3();
 int main() {
+    
+}
+void task3() {
+    write_to_file(100);
     std::ifstream f("./files/data.dat", std::ios::binary);
-    auto table = read_to_table(f);
+    std::vector<Cell> table = read_to_table(f);
+    f.close();
+    // get key of the first entry to check the worst case scenario
     auto search_for = table[0];
     std::cout << "Looking for:\t";
     search_for.print();
-    table[uniform_binary_search(
-        table_table_pair(table, make_lookup(table)), search_for.ISBN
-    )].print();
-}
+    auto lookup = make_lookup(table);
+    for (int i = 0; i < 3; ++i) {
+        std::ifstream f("./files/data.dat", std::ios::binary);
+        // get measurement
+        auto start = high_resolution_clock::now();
+        Cell found_cell = table[
+            uniform_binary_search(ttp(table, lookup), search_for.ISBN)
+        ];
+        auto end = high_resolution_clock::now();
 
+        Book found_book = get_cell_info(found_cell, f);
+        // output
+        double duration = duration_cast<microseconds>(end - start).count();
+        std::cout << "Measurement #" << i + 1 << ": " << duration / 1000 << " ms\n Found:\t";
+        found_book.print();
+    }
+}
 void task2() {
     write_to_file(100);
     // get key of the last entry to check the worst case scenario
