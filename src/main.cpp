@@ -4,14 +4,37 @@ struct Subscription {
     ui32 number;
     string full_name;
     string address;
+
+    Subscription(ui32 number, string full_name, string address) {
+        this->number = number;
+        this->full_name = full_name;
+        this->address = address; 
+    }
 };
 
+const ui32 C, D;
 struct HashTable {
+    std::vector<Subscription> table;
+    ui32 capacity;
+    ui32 num_of_elements;
+    //  iteration trait
+    auto begin() const { return table.begin(); }
+    auto end() const { return table.end(); }
 
+    HashTable() { 
+        for (int i = 0; i < 5; ++i)
+            table.push_back(Subscription(i+10000,"23", "33"));
+    }
+    
+    ui32 hashFunction(ui32 number) {
+        return number % capacity;
+    }
 };
 
 int main() {
-    std::cout << sizeof(ui32);
+    auto a = HashTable();
+    for(auto i : a)
+        std::cout << i.number << " ";
 }
 
 
