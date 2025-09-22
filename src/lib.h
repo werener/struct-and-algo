@@ -7,6 +7,7 @@
 #include <string>
 #include <random>
 #include <chrono>
+#include <array>
 #include <algorithm>
 
 typedef unsigned u;
