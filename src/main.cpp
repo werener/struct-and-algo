@@ -14,7 +14,7 @@ struct Subscription {
         this->full_name = full_name;
         this->address = address; 
         this->valid = true;
-        if ((number < 10000) || (number > 99999))
+        if ((number < 10000) || (number > 99999) || (full_name == "") || (address == ""))
             this->valid = false; 
     }
 
@@ -23,22 +23,30 @@ struct Subscription {
         this->full_name = full_name;
         this->address = address; 
     }
+
+    void print() {
+        std::cout << "#" << number 
+        << " registered to " << full_name << ", " 
+        << address << "\n";
+    }
 };
 
 
 struct HashTable {
-    static const ui32 C = 11, D = 7, Q = 100000 - 10000;
-    std::vector<Subscription> table = std::vector(Q, Subscription());
-    ui32 capacity = Q;
+    static const ui32 C = 1, D = 3, BASE_CAPACITY = 10;
+
+    ui32 capacity = BASE_CAPACITY;
     ui32 num_of_elements = 0;
+    std::vector<Subscription> table = std::vector(capacity, Subscription());
+    
     //  iteration trait
     auto begin() const { return table.begin(); }
     auto end() const { return table.end(); }
 
     HashTable() { 
-        num_of_elements = 5;
-        for (int i = 0; i < 5; ++i)
-            table[i] = Subscription(i+10000, "23", "33");
+        for (int i = 0; i < 5; ++i) {
+            this->insert(13 * i+10000, "23", "33");
+        }
     }
     
     ui32 hashFunction(ui32 number) {
@@ -49,27 +57,37 @@ struct HashTable {
     
     void insert(ui32 number, string full_name, string address) {
         ui32 hash_key = hashFunction(number);
+        Subscription hashed_entry = Subscription(number, full_name, address);
+        if (!hashed_entry.valid) {
+            std::cout << "Tried to hash invalid subscription:\n";
+            hashed_entry.print();
+            std::cout << "\n";
+            return; 
+        }
+
+        if (++num_of_elements > capacity * 0.75) {
+            std::cout << "Element limit exceeded. Rehashing.\n";
+            rehash();
+            std::cout << "Rehashed successfully.\n\n";
+        }
+
         if (table[hash_key].valid) {
             int i = 0;
-            while (table[hash_key].valid)
-                hash_key = hashFunction(hash_key + C * i + D * i*i);
-            table[hash_key] = Subscription(number, full_name, address);
-            num_of_elements++;
+            std::cout << "Trying to prevent hash collision at " << hash_key << std::endl;
+            while (table[hash_key].valid) 
+                hash_key = hashFunction(hash_key + C * ++i + D * i*i);
+            std::cout << "Found free key " << hash_key << "\n\n";
         }
-
-        else {
-            num_of_elements++;
-            table[hash_key] = Subscription(number, full_name, address);
-        }
-
-        if (num_of_elements > capacity * 0.75)
-            rehash();
+        hashed_entry.print();
+        table[hash_key] = hashed_entry;
+        std::cout << "Successfully inserted at " << hash_key << "\n\n";
     }
 
     void print() {
         for(auto entry : *this)
             if (entry.valid)
-                std::cout << "#" << entry.number << " registered to " << entry.full_name << ", " << entry.address << "\n";
+                entry.print();
+                
     }
     void print_full() {
         for (int i = 0; i < capacity; ++i) {
@@ -82,6 +100,11 @@ struct HashTable {
 
 int main() {
     auto a = HashTable();
+    a.insert(41282, "SVO", "332");
+    a.insert(41282, "ABJ", "31241231232");
+    a.insert(4128, "asdsad", "2367472y43");
+
+    a.insert(41282, "asdsad", "2367472y43");
     a.print_full();
 }
 
