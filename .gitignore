@@ -1,6 +1,6 @@
 # Project-specific
 /build
-/.vscode
+/.vscode/*
 /files
 .~lock.*
 
