@@ -25,7 +25,7 @@ struct HashTable {
         c = capacity - 1;
         d = capacity + 1;
         while(num_of_elements < init_len) 
-            this->insert(Subscription::generate_random(), false);
+            this->insert(Subscription::generate_random(), true);
     }
 
 
@@ -34,7 +34,10 @@ struct HashTable {
     }
 
     void rehash() {
-        table.resize(table.size() * 2);
+        std::vector<Subscription> new_table(capacity * 2, Subscription());
+        for (auto entry : table)
+            new_table[hashFunction(entry.number)] = entry;
+        table = move(new_table);
         capacity = table.size();
         c = capacity - 1;
         d = capacity + 1;
@@ -58,19 +61,16 @@ struct HashTable {
 
         if (table[hash_key].valid) {
             int i = 0;
-            
             if (not_initializing) {
                 std::cout << "Trying to prevent hash collision at " << hash_key << std::endl;
-                while (table[hash_key].valid) 
+                while (table[hash_key].valid)
                     hash_key = hashFunction(hash_key + c * ++i + d * i*i);
                 std::cout << "Found free key " << hash_key << "\n\n";
             }
-            else {
-                while (table[hash_key].valid) {
+            else
+                while (table[hash_key].valid) 
                     hash_key = hashFunction(hash_key + c * ++i + d * i*i);
-                    // std::cout << "stuck " << this->num_of_elements << " " << this->capacity << " " << i << " hash_key: " << hash_key << " " << c << std::endl;
-                }
-            }
+            
         }
 
         table[hash_key] = hashed_entry;
@@ -85,6 +85,41 @@ struct HashTable {
         this->insert(hashed_entry, not_initializing);
     }
     
+    Subscription find(ui32 key) {
+        ui32 hash_key = hashFunction(key);
+        Subscription found = table[hash_key];
+        if (found.valid && found.number == key)
+            return found;
+
+        int i = 0;
+        while (i < 100) {
+            hash_key = hashFunction(hash_key + c * ++i + d * i*i);
+            found = table[hash_key];
+            if ((!found.valid) || !(found.number == key))
+                break;
+        }
+
+        std::cout << "Can't find entry with this key\n";
+        return Subscription();
+    }
+
+    void del(ui32 key) {
+        ui32 hash_key = hashFunction(key);
+        Subscription found = table[hash_key];
+        if (found.valid && found.number == key)
+            table[hash_key] = Subscription();
+
+        int i = 0;
+        while (i < 100) {
+            hash_key = hashFunction(hash_key + c * ++i + d * i*i);
+            found = table[hash_key];
+            if ((!found.valid) || !(found.number == key))
+                break;
+        }
+
+        std::cout << "Can't find entry with this key\n";
+    }
+
     void print() {
         for(auto entry : *this)
             if (entry.valid)
@@ -104,8 +139,12 @@ struct HashTable {
 };
 
 int main() {
-    auto a = HashTable(27);
+    auto a = HashTable(10);
     a.print_full();
+    ui32 n;
+    while(n!=1){
+    std::cin >> n;
+    a.find(n).print();}
 }
 
 
