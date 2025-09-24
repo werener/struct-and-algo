@@ -9,6 +9,7 @@
 #include <chrono>
 #include <array>
 #include <algorithm>
+#include <queue>
 
 typedef unsigned u;
 
