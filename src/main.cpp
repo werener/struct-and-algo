@@ -26,8 +26,6 @@ struct HashTable {
         d = capacity + 1;
         while(num_of_elements < init_len) 
             this->insert(Subscription::generate_random(), false);
-        
-        
     }
 
 
@@ -63,21 +61,13 @@ struct HashTable {
             
             if (not_initializing) {
                 std::cout << "Trying to prevent hash collision at " << hash_key << std::endl;
-                while (table[hash_key].valid) {
-                    if (i < 100)
-                        hash_key = hashFunction(hash_key + c * ++i + d * i*i);
-                    else
-                        hash_key = hashFunction(hash_key + c * ++i);
-                    
-                }
+                while (table[hash_key].valid) 
+                    hash_key = hashFunction(hash_key + c * ++i + d * i*i);
                 std::cout << "Found free key " << hash_key << "\n\n";
             }
             else {
                 while (table[hash_key].valid) {
-                    if (i < 100)
-                        hash_key = hashFunction(hash_key + c * ++i + d * i*i);
-                    else
-                        hash_key = hashFunction(hash_key + c * ++i);
+                    hash_key = hashFunction(hash_key + c * ++i + d * i*i);
                     // std::cout << "stuck " << this->num_of_elements << " " << this->capacity << " " << i << " hash_key: " << hash_key << " " << c << std::endl;
                 }
             }
