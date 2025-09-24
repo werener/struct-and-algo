@@ -1,7 +1,4 @@
 # Project-specific
-/build/*
-/.vscode/*
-/files
 .~lock.*
 
 # Prerequisites
