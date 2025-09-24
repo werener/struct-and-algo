@@ -4,7 +4,7 @@ FOUND_FILE=$(find $(dirname "$0") -maxdepth 2 -type f -name "main.cpp" -print -q
 if [[ -n "$FOUND_FILE" ]];
 then
     g++ -ggdb -O0 -o build/main "$FOUND_FILE" &&
-    chmod u+x ./build/main &&
+    chmod u+x ./build/main && 
     ./build/main
 else
     echo "No main.cpp" 

@@ -1,49 +1,5 @@
 #include "lib.hpp"
-
-struct Subscription {
-    ui32 number;
-    string full_name;
-    string address;
-    bool valid;
-
-    static Subscription generate_random() {
-        const std::string characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        std::random_device rd; std::mt19937_64 gk(rd());
-        std::uniform_int_distribution<int> num_gen(10000, 99999);
-        std::uniform_int_distribution<size_t> char_gen(0, characters.size()-1);
-        //  gen name
-        string name = "", address = "";
-        name.push_back(characters[char_gen(gk) % 26]);
-        name.push_back('.');
-        name.push_back(characters[char_gen(gk) % 26]);
-        name.push_back('.');
-        name.push_back(characters[char_gen(gk) % 26]);
-        for (int i = 0; i < 7 + rand() % 10; ++i)
-            name += characters[26 + char_gen(gk) % 26];
-        //  gen address
-        for (int i = 0; i < 10 + rand() % 20; ++i)
-            address += characters[char_gen(gk)];
-
-        return Subscription(num_gen(gk), name, address);
-    }
-
-    Subscription() { this->valid = false; }
-
-    Subscription(ui32 number, string full_name, string address) {
-        this->number = number;
-        this->full_name = full_name;
-        this->address = address; 
-        this->valid = true;
-        if ((number < 10000) || (number > 99999) || (full_name == "") || (address == "")) 
-            this->valid = false; 
-    }
-
-    void print() {
-        std::cout << "#" << number 
-        << " registered to " << full_name 
-        << ", " << address << "\n";
-    }
-};
+#include "Subscription.hpp"
 
 
 struct HashTable {
@@ -66,11 +22,12 @@ struct HashTable {
     HashTable(ui32 init_len) {
         capacity = init_len * 2; 
         table = std::vector(capacity, Subscription());
+        c = capacity - 1;
+        d = capacity + 1;
         while(num_of_elements < init_len) 
             this->insert(Subscription::generate_random(), false);
         
-        c = capacity - 1;
-        d = capacity + 1;
+        
     }
 
 
@@ -84,7 +41,7 @@ struct HashTable {
         c = capacity - 1;
         d = capacity + 1;
     }
-    
+
     void insert(Subscription hashed_entry, bool not_initializing = true) {
         ui32 hash_key = hashFunction(hashed_entry.number);
 
@@ -103,15 +60,27 @@ struct HashTable {
 
         if (table[hash_key].valid) {
             int i = 0;
+            
             if (not_initializing) {
                 std::cout << "Trying to prevent hash collision at " << hash_key << std::endl;
-                while (table[hash_key].valid) 
-                    hash_key = hashFunction(hash_key + c * ++i + d * i*i);
+                while (table[hash_key].valid) {
+                    if (i < 100)
+                        hash_key = hashFunction(hash_key + c * ++i + d * i*i);
+                    else
+                        hash_key = hashFunction(hash_key + c * ++i);
+                    
+                }
                 std::cout << "Found free key " << hash_key << "\n\n";
             }
-            else
-                while (table[hash_key].valid) 
-                    hash_key = hashFunction(hash_key + c * ++i + d * i*i);
+            else {
+                while (table[hash_key].valid) {
+                    if (i < 100)
+                        hash_key = hashFunction(hash_key + c * ++i + d * i*i);
+                    else
+                        hash_key = hashFunction(hash_key + c * ++i);
+                    // std::cout << "stuck " << this->num_of_elements << " " << this->capacity << " " << i << " hash_key: " << hash_key << " " << c << std::endl;
+                }
+            }
         }
 
         table[hash_key] = hashed_entry;
@@ -145,8 +114,7 @@ struct HashTable {
 };
 
 int main() {
-    auto a = HashTable(20);
-   
+    auto a = HashTable(27);
     a.print_full();
 }
 
