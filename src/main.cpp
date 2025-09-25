@@ -1,13 +1,24 @@
 #include "lib.hpp"
 #include "HashTable.hpp"
 
+void cli() {
+    ui32 init_len;
+    std::cout << "Enter amount of numbers to initialize HashTable with:\n";
+    if(!(std::cin >> init_len))
+        break;
+    HashTable a;
+}
+
+
 int main() {
     auto a = HashTable(10);
     a.print_full();
-    ui32 n;
-    while(n!=1){
-        std::cin >> n;
-        a.find((ui32)n).print();
+    int n=0;
+    while(n != 1) {
+        if(!(std::cin >> n))
+            break;
+        auto b = a.find((int)n);
+        if (b.valid) b.print();
     }
 }
 

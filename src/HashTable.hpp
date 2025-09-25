@@ -7,7 +7,6 @@ struct HashTable {
     ui32 capacity;
     ui32 num_of_elements = 0;
     std::vector<Subscription> table; 
-    
     //  iteration trait
     auto begin() const { return table.begin(); }
     auto end() const { return table.end(); }
@@ -90,13 +89,13 @@ struct HashTable {
         Subscription found = table[hash_key];
         if (found.valid && found.number == key)
             return found;
-
+ 
         int i = 0;
         while (i < 100) {
             hash_key = hashFunction(hash_key + c * ++i + d * i*i);
             found = table[hash_key];
-            if ((!found.valid) || !(found.number == key))
-                break;
+            if ((found.valid) && (found.number == key))
+                return found;
         }
 
         std::cout << "Can't find entry with this key\n";
@@ -113,8 +112,8 @@ struct HashTable {
         while (i < 100) {
             hash_key = hashFunction(hash_key + c * ++i + d * i*i);
             found = table[hash_key];
-            if ((found.valid) || (found.number == key))
-                break;
+            if ((found.valid) && (found.number == key))
+                table[hash_key] = Subscription();
         }
 
         std::cout << "Can't find entry with this key\n";
