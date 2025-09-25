@@ -1,6 +1,18 @@
 #include "lib.hpp"
 #include "HashTable.hpp"
 
+char user_selection_menu();
+void cli();
+
+void test();
+
+int main() {
+    // cli();
+    test();
+}
+
+
+
 char user_selection_menu() {
     std::cout 
         << "\n0. Exit program \t" << "1. Insert element \n"
@@ -65,6 +77,29 @@ void cli() {
     }
 }
 
-int main() {
-    cli();
+void test() {
+    HashTable table(3);
+    table.print_full();
+    std::cout << string(30,'-') << std::endl;
+    for (auto entry: table.table) {
+        if (!entry.valid)
+            continue;
+        table.del(entry.number);
+    }
+    std::cout << string(30,'-') << std::endl;
+    table.print_full();
+    std::cout << string(30,'-') << std::endl;
+    table.insert(78208, "B.B.Bbbbb", "8fj54Qj060");    
+    table.insert(42312, "C.C.Ashdghas", "128hd382s");
+    table.insert(10001, "B.B.Bbbbobby", "74328kfds");
+    table.insert(10001, "T.D.Deriuaasdsa", "534634634");
+    table.insert(99999, "V.G.D.Ajdfsjkakisdfjaksf", "a");
+    table.insert(32154, "john", "4104d32m4-2134d02d32d9023_2934*1230-f34832");
+    std::cout << string(30,'-') << std::endl;
+    table.print_full();
+    std::cout << string(30,'-') << std::endl;
+    table.find(32154).print();
+    table.find(99999).print();
+    table.find(10001).print();
+    std::cout << string(30,'-') << std::endl;
 }

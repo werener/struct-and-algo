@@ -18,7 +18,7 @@ struct HashTable {
         table = std::vector(capacity, Subscription());
     }
     HashTable(ui32 init_len) {
-        capacity = init_len * 4; 
+        capacity = init_len * 2; 
         table = std::vector(capacity, Subscription());
         c = capacity - 1;
         d = capacity + 1;
@@ -32,13 +32,23 @@ struct HashTable {
     }
 
     void rehash() {
-        std::vector<Subscription> new_table(capacity * 2, Subscription());
-        for (auto entry : table)
-            new_table[hashFunction(entry.number)] = entry;
-        table = move(new_table);
-        capacity = table.size();
+        capacity *= 2;
         c = capacity - 1;
         d = capacity + 1;
+        std::vector<Subscription> new_table(capacity, Subscription());
+
+        ui32 hash_key; 
+        for (auto entry : table) {
+            hash_key = hashFunction(entry.number);
+            if (new_table[hash_key].valid) {
+                int i = 0;
+                while (new_table[hash_key].valid)
+                    hash_key = hashFunction(hash_key + c * ++i + d * i*i);
+            }
+            new_table[hash_key] = entry;
+        }
+        table = move(new_table);
+        std::cout << "Rehashed successfully.\nNew capacity: " << this->table.size() << "\n\n" ;
     }
 
     void insert(Subscription hashed_entry, bool not_initializing = true) {
@@ -54,7 +64,7 @@ struct HashTable {
         if (++num_of_elements > capacity * 0.7) {
             std::cout << "Element limit exceeded. Rehashing.\n";
             rehash();
-            std::cout << "Rehashed successfully.\nNew capacity: " << this->table.size() << "\n\n" ;
+
         }
 
         if (table[hash_key].valid) {
@@ -68,7 +78,6 @@ struct HashTable {
             else
                 while (table[hash_key].valid) 
                     hash_key = hashFunction(hash_key + c * ++i + d * i*i);
-            
         }
 
         table[hash_key] = hashed_entry;
@@ -105,9 +114,10 @@ struct HashTable {
         ui32 hash_key = hashFunction(key);
         Subscription found = table[hash_key];
         if (found.valid && found.number == key) {
-            std::cout << "Successfully deleted \n";
             table[hash_key].print();
+            std::cout << "Successfully deleted from " << hash_key << "\n\n";
             table[hash_key] = Subscription();
+            num_of_elements--;
             return;
         }
         int i = 0;
@@ -115,9 +125,10 @@ struct HashTable {
             hash_key = hashFunction(hash_key + c * ++i + d * i*i);
             found = table[hash_key];
             if ((found.valid) && (found.number == key)) {
-                table[hash_key] = Subscription();
-                std::cout << "Successfully deleted \n";
                 table[hash_key].print();
+                std::cout << "Successfully deleted from " << hash_key << "\n\n";
+                table[hash_key] = Subscription();
+                num_of_elements--;
                 return;
             }
         }
@@ -131,7 +142,7 @@ struct HashTable {
                 entry.print();
     }
     void print_full() {
-        for (int i = 0; i < capacity; ++i) {
+        for (int i = 0; i < table.size(); ++i) {
             Subscription entry = this->table[i];
             if (entry.valid)
                 std::cout 
