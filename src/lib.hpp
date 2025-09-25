@@ -1,3 +1,6 @@
+#ifndef lib
+#endif
+
 #include <cstring>
 #include <cstdlib>
 #include <iostream>
@@ -10,6 +13,8 @@
 #include <array>
 #include <algorithm>
 #include <queue>
+#include <termios.h>
+#include <unistd.h>
 
 typedef unsigned u;
 

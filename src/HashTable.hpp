@@ -1,4 +1,3 @@
-#include "lib.hpp"
 #include "Subscription.hpp"
 
 
@@ -24,7 +23,7 @@ struct HashTable {
         c = capacity - 1;
         d = capacity + 1;
         while(num_of_elements < init_len) 
-            this->insert(Subscription::generate_random(), true);
+            this->insert(Subscription::generate_random(), false);
     }
 
 
@@ -105,15 +104,22 @@ struct HashTable {
     void del(ui32 key) {
         ui32 hash_key = hashFunction(key);
         Subscription found = table[hash_key];
-        if (found.valid && found.number == key)
+        if (found.valid && found.number == key) {
+            std::cout << "Successfully deleted \n";
+            table[hash_key].print();
             table[hash_key] = Subscription();
-
+            return;
+        }
         int i = 0;
         while (i < 100) {
             hash_key = hashFunction(hash_key + c * ++i + d * i*i);
             found = table[hash_key];
-            if ((found.valid) && (found.number == key))
+            if ((found.valid) && (found.number == key)) {
                 table[hash_key] = Subscription();
+                std::cout << "Successfully deleted \n";
+                table[hash_key].print();
+                return;
+            }
         }
 
         std::cout << "Can't find entry with this key\n";
