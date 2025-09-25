@@ -97,7 +97,7 @@ struct HashTable {
         Subscription found = table[hash_key];
         if (found.valid && found.number == key)
             return found;
- 
+
         int i = 0;
         while (i < 100) {
             hash_key = hashFunction(hash_key + c * ++i + d * i*i);

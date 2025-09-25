@@ -7,10 +7,9 @@ void cli();
 void test();
 
 int main() {
-    // cli();
-    test();
+    cli();
+    // test();
 }
-
 
 
 char user_selection_menu() {
@@ -27,7 +26,6 @@ char user_selection_menu() {
     else
         std::cout << "No such option \n\n";
     return user_selection_menu();
-     
 }
 
 void cli() {
@@ -39,7 +37,6 @@ void cli() {
     HashTable table(init_len);
     std::cout << "Table created succesfully\n"; 
 
-    
     while (true) {
         Subscription found;
         ui32 key;

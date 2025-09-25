@@ -1,6 +1,3 @@
-#ifndef lib
-#endif
-
 #include <cstring>
 #include <cstdlib>
 #include <iostream>
