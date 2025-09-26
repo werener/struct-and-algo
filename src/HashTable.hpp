@@ -146,10 +146,13 @@ struct HashTable {
             Subscription entry = this->table[i];
             if (entry.valid)
                 std::cout 
-                <<"Hash_key " << i << ": " 
+                << "Hash_key " << i << ": " 
                 << "#" << entry.number 
                 << " registered to " << entry.full_name 
                 << ", " << entry.address << "\n";
+            else
+                std::cout << "Hash_key " << i << ": "
+                << "{empty}\n";
         }
     }
 };
