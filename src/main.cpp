@@ -13,8 +13,8 @@ int main() {
 }
 
 
-    const string PUNCTUATION_SEPARATORS = ",\n\t.-:;@#~\"{}[]()!?";
-    const string PUNCTUATION_CONNECTORS = "-:_`\'";
+const string PUNCTUATION_SEPARATORS = ",\n\t.-:;@#~\"{}[]()!?";
+const string PUNCTUATION_CONNECTORS = "-:_`\'";
 string preprocess(string text) {
     for (auto s : PUNCTUATION_SEPARATORS) 
         std::replace( text.begin(), text.end(), s, ' ' );
@@ -87,24 +87,19 @@ void task_1 () {
     std::cout << "\tHighlighted prefixes:\n" << highlight_matches(text, matches, HIGHLIGHT_ALL) << "\n";
     }
 
+/*      task 2      */
 
+std::vector<size_t> computeLPSArray(string pattern) {
+    int saved_len = 0;
+    std::vector<size_t> LPS(pattern.length());
 
-
-
-std::vector<int> computeLPSArray(string pattern, int m) {
-    int length = 0;
-    std::vector<int> LPS(pattern.length());
-    LPS[0] = 0;
     int i = 1;
-
-    while (i < m) {
-        if (pattern[i] == 
-            pattern[length++]) {
-            LPS[i++] = length;
-        }
+    while (i < pattern.length()) {
+        if (pattern[i] == pattern[saved_len]) 
+            LPS[i++] = ++saved_len;
         else {
-            if (length != 0)
-                length = LPS[length - 1];
+            if (saved_len)
+                saved_len = LPS[saved_len - 1];
             else 
                 LPS[i++] = 0;
         }
@@ -112,42 +107,99 @@ std::vector<int> computeLPSArray(string pattern, int m) {
     return LPS;
 }
 
-std::vector<int> KMP(string pattern, string text) {
+std::vector<std::tuple<string, size_t, size_t>> KMP(string pattern, string text) {
     int m = pattern.length();
     int n = text.length();
 
-    std::vector<int> ans;
+    std::vector<std::tuple<string, size_t, size_t>> ans {std::tuple{"", 0, 0}};
 
-    std::vector<int> LPS = computeLPSArray(pattern, m);
-
-    int i = 0;
-    int j = 0;
+    std::vector<size_t> LPS = computeLPSArray(pattern);
+    
+    size_t i = 0, j = 0;
+    string cur_found = "";
     while (i < n) {
         if (pattern[j] == text[i]) {
+            cur_found.push_back(pattern[j]);
             i++;
             j++;
         }
+
         if (j == m) {
-            ans.push_back(i - j);
+            ans.push_back(std::tuple{cur_found, i - j, i});
             j = LPS[j - 1];
+            cur_found = "";
         }
 
         else if (i < n && pattern[j] != text[i]) {
-            if (j != 0) 
+            if (j != 0) { 
                 j = LPS[j - 1];
-            else 
+                cur_found = "";
+            }
+            else
                 i++;
         }
     }
     return ans;
 }
 
+std::tuple<string, size_t, size_t> KMP_first(string pattern, string text) {
+    int m = pattern.length();
+    int n = text.length();
+    std::vector<size_t> LPS = computeLPSArray(pattern);
+
+    size_t i = 0, j = 0;
+    string cur_found = "";
+    while (i < n) {
+        if (pattern[j] == text[i]) {
+            cur_found.push_back(pattern[j]);
+            i++;
+            j++;
+        }
+
+        if (j == m) 
+            return (std::tuple{cur_found, i - j, i});
+
+        else if (i < n && pattern[j] != text[i]) {
+            if (j != 0) { 
+                j = LPS[j - 1];
+                cur_found = "";
+            }
+            else
+                i++;
+        }
+    }
+    return std::tuple{ "", 0, 0 };
+}
+
+
 void task_2() {
-    std::ifstream file("./files/task1_apparent.txt");
-    string text;
-    getline(file, text);
-    auto a =  KMP("word_matchabcsd", text);
-    for (auto c : a)
-        std::cout << c << "\n";
+    string a = "isddkhuf";
+    string b = "dfposgofdgisddkjm";
+
+    string word; 
+    size_t start, end;
+    for (int i = a.length() - 1; i >= 0; --i) {
+        std::tie(word, start, end) = KMP_first(a.substr(0, i), b);
+        if (word != "") {
+            std::cout << "found: '" << word << "' with length " << i << "\n";
+            b.insert(end, "|");
+            b.insert(start, "|");
+            std::cout << b << "\n";
+            break;
+        }
+        if (i == 0) {
+            std::cout << "found: '" << word << "' with length " << i << "\n";
+            b.insert(end, "|");
+            b.insert(start, "|");
+            std::cout << b << "\n";
+        }
+    }
+
+
+    // test of work
+
+    // auto find = KMP(b, a);
+    // for(auto b : find) 
+    //     std::cout << "'" << std::get<0>(b) << "' : " << std::get<1>(b) << " to " << std::get<2>(b) << "\n";
 }
 
