@@ -1,1 +1,1 @@
-The class template basic_string stores and manipulates sequences of characterlike objects, which are nonarray objects of TrivialType and StandardLayoutType. The class is dependent neither on the character type nor on the nature of operations on that type. The definitions operations123 of the operations are supplied via the Traits template parameter a specialization of std::char_traits or a compatible traits class.
+word,word word,word_ma word_matchabcsd, word_match word_matchabc word_matchabcs matchabc

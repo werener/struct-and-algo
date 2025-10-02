@@ -12,12 +12,6 @@ struct Node {
         this->dict_links = std::unordered_set<string>();
     }
 
-    void print_children() {
-        for (auto c : children)
-            std::cout << c.first << " ";
-        std::cout << std::endl;
-    }
-
     //  Children manipulation
     bool has_child(char key) {
         return (this->children.find(key) != this->children.end());
@@ -44,7 +38,6 @@ template<typename Collection>
 class Trie {
 protected:
     Node* Root;
-    
     //  Add new pattern into the trie
     void add_pattern(string pattern) {
         Node *cur_node = Root;
@@ -55,13 +48,12 @@ protected:
         }
         cur_node->add_dict_link(pattern);
     }
-
     //  Create failure and dictionary links
     void InitializeLinks() {
         Node *cur_node;
         Root->failure_link = Root;
         std::queue<Node*> queue;
-
+        //  '2nd layer' to the queue
         for (const auto& [_, c] : Root->children) {
             c->failure_link = Root;
             queue.push(c);
@@ -69,7 +61,8 @@ protected:
 
         while(!queue.empty()) {
             cur_node = queue.front();
-            queue.pop();         
+            queue.pop();     
+            //  add next layer to the queue, while handling the parents    
             for (const auto& [key, child] : cur_node->children) {
                 queue.push(child);
 
@@ -81,10 +74,9 @@ protected:
                 Node* Traceback = cur_node->failure_link;
                 while (!Traceback->has_child(key) && (Traceback != Root)) 
                     Traceback = Traceback->failure_link;
-                
 
                 child->failure_link = 
-                Traceback->get_child(key) == nullptr 
+                    Traceback->get_child(key) == nullptr 
                     ? Root 
                     : Traceback->get_child(key);    
                 child->copy_dict_links(child->failure_link);

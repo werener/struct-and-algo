@@ -57,14 +57,12 @@ string highlight_matches(string text, std::vector<std::tuple<string, size_t, siz
 
 void task_1 () {
     std::unordered_set<string> patterns{};
+    std::ifstream file("./files/task1.txt");
+    string text, cur_string;
+    getline(file, text);
 
-    std::ifstream file("./files/task1_apparent.txt");
-    string text_raw;
-    getline(file, text_raw);
-   
-    
-    string text = preprocess(text_raw);
-    string cur_string;
+    //  preprocess the text
+    text = preprocess(text);
     std::cout << "\tSearching in:\n" << text << "\n\n";
 
     //  create set of searched prefixes
@@ -78,14 +76,12 @@ void task_1 () {
         cur_string.push_back(c);
     } if (!cur_string.empty()) 
         patterns.insert(" " + cur_string);
-    
-    
     //  search
     Trie trie = Trie(patterns);
     auto matches = trie.search(text);
     const bool HIGHLIGHT_ALL = true;
     std::cout << "\tHighlighted prefixes:\n" << highlight_matches(text, matches, HIGHLIGHT_ALL) << "\n";
-    }
+}
 
 /*      task 2      */
 
@@ -173,33 +169,30 @@ std::tuple<string, size_t, size_t> KMP_first(string pattern, string text) {
 
 
 void task_2() {
-    string a = "isddkhuf";
-    string b = "dfposgofdgisddkjm";
+    const int CASES = 3;
+    string a_c[CASES] = {"isddkhuf", "scvbrressdg", "aaaaa"};
+    string b_c[CASES] = {"dfposgofdgisddkjm", "scvhfjsscvbrrj21", "babaabaaaabaaabaaaaab"};
+    for (int i = 0; i < CASES; ++i) {
+        string a = a_c[i], b = b_c[i];
 
-    string word; 
-    size_t start, end;
-    for (int i = a.length() - 1; i >= 0; --i) {
-        std::tie(word, start, end) = KMP_first(a.substr(0, i), b);
-        if (word != "") {
-            std::cout << "found: '" << word << "' with length " << i << "\n";
-            b.insert(end, "|");
-            b.insert(start, "|");
-            std::cout << b << "\n";
-            break;
+        string word; 
+        size_t start, end;
+        for (int i = a.length(); i >= 0; --i) {
+            std::tie(word, start, end) = KMP_first(a.substr(0, i), b);
+            if (word != "") {
+                std::cout << "found: '" << word << "' with length " << i << "\n";
+                b.insert(end, "|");
+                b.insert(start, "|");
+                std::cout << b << "\n";
+                break;
+            }
+            if (i == 0) {
+                std::cout << "found: '" << word << "' with length " << i << "\n";
+                b.insert(end, "|");
+                b.insert(start, "|");
+                std::cout << b << "\n";
+            }
         }
-        if (i == 0) {
-            std::cout << "found: '" << word << "' with length " << i << "\n";
-            b.insert(end, "|");
-            b.insert(start, "|");
-            std::cout << b << "\n";
-        }
+        std::cout << std::endl;
     }
-
-
-    // test of work
-
-    // auto find = KMP(b, a);
-    // for(auto b : find) 
-    //     std::cout << "'" << std::get<0>(b) << "' : " << std::get<1>(b) << " to " << std::get<2>(b) << "\n";
 }
-
