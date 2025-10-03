@@ -8,10 +8,13 @@ void task_2();
 int main() {
     using namespace std::chrono;
     auto start = high_resolution_clock::now();
-    auto end = high_resolution_clock::now();
+    // for (int i = 0; i < 10; ++i)
     // task_1();
-    task_1_if_reverse();
-    // task_2();
+    // task_1_if_reverse();
+    task_2();
+    auto end = high_resolution_clock::now();
+    std::chrono::duration<double> duration = end - start;
+    std::cout << "\n"<< duration.count() * 1000 << "ms\n";
 }
 
 
@@ -205,9 +208,9 @@ std::tuple<string, size_t, size_t> KMP_first(string pattern, string text) {
 
 
 void task_2() {
-    const int CASES = 3;
-    string a_c[CASES] = {"isddkhuf", "scvbrressdg", "aaaaa"};
-    string b_c[CASES] = {"dfposgofdgisddkjm", "scvhfjsscvbrrj21", "babaabaaaabaaabaaaaab"};
+    const int CASES = 4;
+    string a_c[CASES] = {"isddkhuf", "scvbrressdg", "aaaaa", "g"};
+    string b_c[CASES] = {"dfposgofdgisddkjm", "scvhfjsscvbrrj21", "babaabaaaabaaabaaaaab", "hssdsa"};
     for (int i = 0; i < CASES; ++i) {
         string a = a_c[i], b = b_c[i];
 
