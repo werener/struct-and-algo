@@ -2,6 +2,7 @@
 #include "Trie.hpp"
 
 void task_1();
+void task_1_if_reverse();
 void task_2();
 
 int main() {
@@ -9,7 +10,8 @@ int main() {
     auto start = high_resolution_clock::now();
     auto end = high_resolution_clock::now();
     // task_1();
-    task_2();
+    task_1_if_reverse();
+    // task_2();
 }
 
 
@@ -56,7 +58,7 @@ string highlight_matches(string text, std::vector<std::tuple<string, size_t, siz
 }
 
 void task_1 () {
-    std::unordered_set<string> patterns{};
+    std::set<string> patterns{};
     std::ifstream file("./files/task1.txt");
     string text, cur_string;
     getline(file, text);
@@ -83,6 +85,40 @@ void task_1 () {
     std::cout << "\tHighlighted prefixes:\n" << highlight_matches(text, matches, HIGHLIGHT_ALL) << "\n";
 }
 
+void task_1_if_reverse() {
+    std::vector<string> words{};
+    std::ifstream file("./files/task_1_rev.txt");
+    string text, cur_string;
+    getline(file, text);
+
+    //  preprocess the text
+    text = preprocess(text);
+    std::cout << "\tSearching in:\n" << text << "\n\n";
+
+    //  create set of searched prefixes
+    for (char c : text) {
+        if (c == ' ') {
+            if (!cur_string.empty()) 
+                words.push_back(cur_string);
+            cur_string = "";
+            continue;
+        }
+        cur_string.push_back(c);
+    } if (!cur_string.empty()) 
+        words.push_back(cur_string);
+
+    for (int i = 0; i < words.size(); ++i) {
+        string checked = words[i];
+
+        std::reverse(checked.begin(), checked.end());
+        for (int j = i + 1; j < words.size(); ++j) {
+            if (checked == words[j]) {
+                std::cout << " #" << i + 1 << " '" << words[i] << "' and #" << j + 1 << " '" <<  words[j] << "'\n" ;
+            }
+        }
+        
+    }
+}
 /*      task 2      */
 
 std::vector<size_t> computeLPSArray(string pattern) {
