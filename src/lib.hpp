@@ -5,6 +5,7 @@
 #include <random>
 #include <chrono>
 #include <algorithm>
+#include <bits/stdc++.h>
 
 #include <cstring>
 #include <vector>
