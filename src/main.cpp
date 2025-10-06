@@ -13,7 +13,6 @@ char context_menu() {
     return get_char();
 }
 
-
 void cli() {
     std::cout << "Enter all characters to fill the tree:\n";
     string _;
@@ -30,20 +29,19 @@ void cli() {
                 return;
             case '1':
                 std::cout << "Enter char to insert:\t";
-                tree.insert(get_char());
-                break;    
+                tree.insert(get_char()); 
+                std::cout << std::endl; break;    
             case '2':
                 tree.traverse();
-                break;
+                std::cout << std::endl; break;
             case '3':
+                std::cout << std::endl;
                 tree.print();
                 break;
             case '4':
-                std::cout << "Sum of all leaves is " << tree.sum_of_leaves();
-                break;
+                std::cout << "Sum of all leaves is " << tree.sum_of_leaves() << "\n"; break;
             case '5':
-                std::cout << "Height is " << tree.height();
-                break;
+                std::cout << "Height is " << tree.height() << "\n"; break;
             default:
                 std::cout << "No such option\n";        
         }

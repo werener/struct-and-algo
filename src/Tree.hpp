@@ -4,16 +4,9 @@ struct Node {
     char value;
     Node* left = nullptr;
     Node* right = nullptr;
-    
     Node() {};
-    Node(char value) {
-        this->value = value;
-
-    } 
-
-    bool is_leaf() {
-        return (left == nullptr && right == nullptr);
-    } 
+    Node(char value) {  this->value = value;  } 
+    bool is_leaf() {    return (left == nullptr && right == nullptr);   } 
 };
 
 struct Tree {
@@ -61,11 +54,11 @@ protected:
             s += sum_of_leaves_private(cur->left) + sum_of_leaves_private(cur->right);
         return s;
     }
-
-    int height_private(Node* root) {
-        if (root == nullptr) 
+    
+    ui64 height_private(Node* cur) {
+        if (cur == nullptr) 
             return 0;
-        int dl = height_private(root->left), dr = height_private(root->right);
+        int dl = height_private(cur->left), dr = height_private(cur->right);
         return (1 + (dl > dr ? dl : dr));
     }
 
@@ -84,6 +77,7 @@ protected:
             print_private( prefix + (isLeft ? "│     " : "      "), node->right, false);
         }
     }
+    
 public:
     Tree(){}
 
