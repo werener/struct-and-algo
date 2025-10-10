@@ -2,7 +2,6 @@
 
 
 typedef size_t Vertex;
-
 struct Edge {
     union { Vertex u; Vertex from; Vertex source; };
     union { Vertex v; Vertex to; Vertex dest;};
@@ -60,7 +59,7 @@ struct Graph {
         if (u <= size && v <= size && u != v)
             this->add_non_directed_edge(u, v, w);
     }
-    
+
     void add_non_directed_edge(Vertex u, Vertex v, i64 w) {
         if (u-- == v--)
             std::cout << "Trying to create a self-loop\n";
@@ -79,7 +78,7 @@ struct Graph {
 
     std::vector<i64> bellman_ford(Vertex source) {
         std::vector<i64> distance(size, INT_MAX);
-        distance[source] = 0;
+        distance[--source] = 0;
         //  construct distance vector for each vertex
         for (size_t i = 0; i < size - 1; ++i) 
             for (const Edge e : this->edges)
