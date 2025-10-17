@@ -76,7 +76,7 @@ struct Graph {
             std::cout << e.u + 1 << " " << e.v + 1 << "  w = " << e.w << "\n";
     }
 
-    std::vector<i64> bellman_ford(Vertex source) {
+    std::vector<i64> bellman_ford(Vertex source, bool print_result=false) {
         std::vector<i64> distance(size, INT_MAX);
         distance[--source] = 0;
         //  construct distance vector for each vertex
@@ -96,12 +96,14 @@ struct Graph {
         }
 
         //  result
-        std::cout << "Vertex distances from " << source + 1 << "\n";
-        for (size_t i = 0; i < size; ++i) {
-            if (distance[i] == INT_MAX)
-                std::cout << source + 1 << " -> " << i + 1 << "\t\t" << "UNREACHABLE\n";
-            else
-                std::cout << source + 1 << " -> " << i + 1 << "\t\t" << distance[i] << "\n";
+        if(print_result) { 
+            std::cout << "Vertex distances from " << source + 1 << "\n";
+            for (size_t i = 0; i < size; ++i) {
+                if (distance[i] == INT_MAX)
+                    std::cout << source + 1 << " -> " << i + 1 << "\t\t" << "UNREACHABLE\n";
+                else
+                    std::cout << source + 1 << " -> " << i + 1 << "\t\t" << distance[i] << "\n";
+            }
         }
         return distance;
     }
