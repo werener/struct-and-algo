@@ -16,24 +16,31 @@ Graph user_input() {
     return Graph(size, edges);
 }
 
+void task() {
+    const std::vector<string> edges = 
+    { 
+        "1 2 23", "1 3 12",
+        "2 3 25", "2 5 22", "2 8 35", 
+        "3 4 18", 
+        "5 6 23",  "5 7 14", 
+        "6 7 24", 
+        "7 8 16" 
+    };
+    Graph g(8);
+    for (const string edge : edges) {
+        g.add_non_directed_edge(edge);
+    }
+    // g.print_edges();
+    for (int i = 0; i < 8; ++i) {
+        std::cout << "\nVERTEX #" << i + 1 << "\n";
+        g.bellman_ford(i + 1);
+    }
+    
+}
 int main() {
-    // const std::vector<string> edges = 
-    // { 
-    //     "1 2 23", "1 3 12",
-    //     "2 3 25", "2 5 22", "2 8 35", 
-    //     "3 4 18", 
-    //     "5 6 23",  "5 7 14", 
-    //     "6 7 24", 
-    //     "7 8 16" 
-    // };
-    // Graph g(8);
-    // for (const string edge : edges) {
-    //     g.add_non_directed_edge(edge);
-    // }
-    // // g.print_edges();
-    // g.bellman_ford(2);
+    task();
 
-    Graph g = user_input();
-    g.print_edges();
-    g.bellman_ford(1);
+    // Graph g = user_input();
+    // g.print_edges();
+    // g.bellman_ford(1);
 }   
