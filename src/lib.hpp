@@ -15,6 +15,7 @@
 #include <unordered_set>
 #include <set>
 #include <tuple>
+#include <numeric>
 
 typedef unsigned u;
 
