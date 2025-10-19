@@ -42,15 +42,18 @@ void SFsplit(std::vector<Symbol>& symbols, size_t left, size_t right, string cur
     SFsplit(symbols, cur + 1, right, currentCode + "1");
 }
 
-std::unordered_map<char, string> get_compression_table(string data) {
+/*    creating compression and decompression tables       */
+#define uomap std::unordered_map
+
+uomap<char, string> create_compression_table(string data) {
     std::vector<Symbol> symbols;
-    std::unordered_map<char, ui64> frequency_map;
-    std::unordered_map<char, string> compression_table;
+    uomap<char, ui64> frequency_map;
+    uomap<char, string> compression_table;
 
     for (char c : data) 
         frequency_map[c]++;
-    for (auto pair : frequency_map) 
-        symbols.push_back(Symbol(pair.first, pair.second));
+    for (auto char_freq : frequency_map) 
+        symbols.push_back(Symbol(char_freq.first, char_freq.second));
         
     std::sort(symbols.begin(), symbols.end(), Symbol::compare);
     SFsplit(symbols, 0, symbols.size() - 1);
@@ -59,12 +62,34 @@ std::unordered_map<char, string> get_compression_table(string data) {
         compression_table[symbol.character] = symbol.code;
     return compression_table;
 }
+uomap<string, char> create_decompression_table(uomap<char, string> compression_table) {
+    uomap<string, char> decompression_table;
+    for (auto pair : compression_table) 
+        decompression_table[pair.second] = pair.first;
+    return decompression_table;
+}
 
-string compress(string data) {
-    string compressed_data = "";
-    auto table = get_compression_table(data);
+#undef uomap
 
+
+/*      compression and decompression      */
+string compress(string data, std::unordered_map<char, string> compression_table) {
+    string compressed_data("");
     for (char c : data)
-        compressed_data += table[c];
+        compressed_data += compression_table[c];
     return compressed_data;
+}
+
+string decompress(string compressed_data, std::unordered_map<char, string> compression_table) {
+    auto decompression_table = create_decompression_table(compression_table);
+
+    string cur_code(""), data("");
+    for (char c : compressed_data) {
+        cur_code.push_back(c);
+        if (decompression_table.find(cur_code) != decompression_table.end()) {
+            data.push_back(decompression_table[cur_code]);
+            cur_code = "";
+        }
+    }
+    return data;
 }
