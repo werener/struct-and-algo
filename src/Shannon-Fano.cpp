@@ -1,14 +1,14 @@
 #include "lib.hpp"
 
 struct Symbol {
-    union { char c; char character; };
-    union { ui64 f; ui64 frequency; };
+    union { char c; char ch; char character; };
+    union { ui64 f; ui64 freq; ui64 frequency; };
     string code;
 
     Symbol(char c, ui64 f) { this->c = c; this->f = f; }
     
     static bool compare(Symbol a, Symbol b) {
-        return a.frequency > b.frequency;
+        return a.freq > b.freq;
     }
 };
 
