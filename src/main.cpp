@@ -3,12 +3,7 @@
 #include "Huffman.cpp"
 
 int main() {
-    const string s = "Zhizhikin Leonid Sergeevych";
-    
-
-    // for(auto entry : table) {
-    //     std::cout << entry.first << " " << entry.second << "\n";
-    // }
+    const string s = "Жижикин Леонид Сергеевич";
     std::cout << "\tShannon-Fano\n";
     auto table = create_compression_table(s);
     std::cout << "Compressed: " << compress(s, table) << std::endl;

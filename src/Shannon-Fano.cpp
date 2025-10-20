@@ -12,23 +12,20 @@ struct Symbol {
     }
 };
 
-void SFsplit(std::vector<Symbol>& symbols, size_t left, size_t right, string currentCode="") {
-    if (left > right)
+void SFsplit(std::vector<Symbol>& symbols, int left, int right, string currentCode="") {
+    if (left > right) 
         return;
-
     if (left == right) {
         symbols[left].code = currentCode;
         return;
     }
-
+    
     ui64 len = 0;
-    for (size_t i = left; i <= right; ++i) 
+    for (int i = left; i <= right; ++i) 
         len += symbols[i].f;
     
-
-    int s = 0;
+    ui64 s = 0;
     int cur = left;
-
     for (int i = left; i <= right; ++i) {
         s += symbols[i].frequency;
         if (len - s <= s) {
@@ -54,10 +51,9 @@ uomap<char, string> create_compression_table(string data) {
         frequency_map[c]++;
     for (auto char_freq : frequency_map) 
         symbols.push_back(Symbol(char_freq.first, char_freq.second));
-        
+
     std::sort(symbols.begin(), symbols.end(), Symbol::compare);
     SFsplit(symbols, 0, symbols.size() - 1);
- 
     for (auto& symbol : symbols) 
         compression_table[symbol.character] = symbol.code;
     return compression_table;

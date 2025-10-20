@@ -23,11 +23,10 @@ struct compare {
 void fill_codetable(Node *root, string current_code, std::unordered_map<char, string>& codetable) {
     if (root == nullptr)
         return;
-
     //  check for leaf
     if (!root->l && !root->r)
         codetable[root->character] = current_code;
-
+    //  recursive call
     fill_codetable(root->l, current_code + "0", codetable);
     fill_codetable(root->r, current_code + "1", codetable);
 }
@@ -41,6 +40,8 @@ Node* create_huffman_tree(string text) {
     for (auto char_freq : frequency_map)
         pq.push(new Node(char_freq.first, char_freq.second));
     
+    if(pq.empty())
+        return nullptr;
     while (pq.size() != 1) {
         Node *left = pq.top();  pq.pop();
         Node *right = pq.top(); pq.pop();
