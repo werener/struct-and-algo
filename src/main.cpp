@@ -5,11 +5,10 @@ int main() {
 
     std::cout << string(29, '-') << std::endl;    
     std::vector<std::vector<ui64>> a(10, std::vector<ui64>(10,0));
-    for (int i = 0; i < 10; ++i) {
-        for (int j = 0; j < 10; ++j) {
+    for (int i = 0; i < 10; ++i) 
+        for (int j = 0; j < 10; ++j) 
             a[i][j] = 10 * i + j;
-        }
-    }
+        
     std::cout << "ij" << "\n";
     for (int i = 0; i < 7; ++i) {
         for (int j = 0; j < 10; ++j) 
@@ -51,5 +50,4 @@ int main() {
         { Node(0, 0), Node(1, 0), Node(1, 0), Node(1, 0), Node(1, 0), Node(1, 0) },
     };
     ui64 res = find_optimal_path(test_data);
-    std::cout << "Answer:\t" << res << std::endl;
 }

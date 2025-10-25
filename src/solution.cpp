@@ -50,6 +50,7 @@ ui64 find_optimal_path(grid_type grid) {
     }
     std::cout << string(lw / 2, ' ') << lw << " x " << lh << '\n';
     print_matrix(grid);
+    std::cout << "Answer:\t" << grid[0][lw - 1].least_time << std::endl;
     return grid[0][lw - 1].least_time;
 }
 
